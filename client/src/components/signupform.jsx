@@ -179,7 +179,11 @@ class SignupForm extends React.Component {
           <RadioButton value="apt" label="Apartment"/>
         </RadioButtonGroup>
         Does your living space include a yard or outdoor area?
+<<<<<<< HEAD
         <RadioButtonGroup name="yard" defaultSelected="none" onChange={this.handleHostChange}>
+=======
+        <RadioButtonGroup name="yard" defaultSelected="true" onChange={this.handleHostChange}>
+>>>>>>> modified forms to accomodate new data and refactored state calls to reflect data changes
           <RadioButton value="true" label="Yes"/>
           <RadioButton value="false" label="No"/>
         </RadioButtonGroup>
