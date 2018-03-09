@@ -16,7 +16,7 @@ class HostProfile extends React.Component {
       username: this.props.location.state.username,
       imageUrl: this.props.location.state.profileUrl,
       location: this.props.location.state.location,
-      description: this.props.location.state.description,
+      description: this.props.location.state.host.description, //CHANGED!! BL
       email: this.props.location.state.email
     };
   }

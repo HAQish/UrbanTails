@@ -2,7 +2,7 @@ import React from 'react';
 import { Redirect } from 'react-router-dom';
 import $ from 'jquery';
 import Navbar from './navbar.jsx';
-import { Card, TextField, RadioButton, RadioButtonGroup, RaisedButton } from 'material-ui';
+import { Card, TextField, RadioButton, RadioButtonGroup, RaisedButton, Checkbox, Divider } from 'material-ui';
 
 /*
   SignupForm Component:
@@ -24,10 +24,32 @@ class SignupForm extends React.Component {
       profileUrl: '',
       description: '',
       errors: {},
-      redirectToProfile: false
+      redirectToProfile: false,
+      location: {
+        address: '',
+        city: '',
+        state: '',
+      },
+      pet: {
+        animal: '',
+        friendly: null,
+        description: '',
+        needs: '',
+      },
+      host: {
+        homeType: '',
+        yard: '',
+        otherAnimals: null,
+        description: '',
+      }
     };
     this.handleChange = this.handleChange.bind(this);
     this.onSelect = this.onSelect.bind(this);
+    this.handlePetChange = this.handlePetChange.bind(this);
+    this.handleHostChange = this.handleHostChange.bind(this);
+    this.handleLocationChange = this.handleLocationChange.bind(this);
+    this.handleFriendlyChange = this.handleFriendlyChange.bind(this);
+    this.handleOtherAnimalsChange = this.handleOtherAnimalsChange.bind(this);
   }
 
   handleSubmit(e) {
@@ -44,7 +66,9 @@ class SignupForm extends React.Component {
         email: this.state.email,
         location: this.state.location,
         profileUrl: this.state.profileUrl,
-        description: this.state.description
+        location: this.state.location,
+        pet: this.state.pet,
+        host: this.state.host,
       },
       success: (data) => {
         this.setState({
@@ -69,8 +93,50 @@ class SignupForm extends React.Component {
     });
   }
 
+  handleLocationChange(e) {
+    const target = e.target.name;
+    let currentLocation = this.state.location;
+    currentLocation[target] = e.target.value;
+    this.setState({
+      location: currentLocation,
+    });
+  }
+
+  handleHostChange(e) {
+    const target = e.target.name;
+    let currentHost = this.state.host;
+    currentHost[target] = e.target.value;
+    this.setState({
+      host: currentHost,
+    });
+  }
+
+  handlePetChange(e) {
+    const target = e.target.name;
+    let currentPet = this.state.pet;
+    currentPet[target] = e.target.value;
+    this.setState({
+      pet: currentPet,
+    })
+  }
+
+  handleFriendlyChange(e) {
+    let currentPet = this.state.pet;
+    currentPet.friendly = Boolean(e.target.value);
+    this.setState({
+      pet: currentPet,
+    });
+  }
+
+  handleOtherAnimalsChange(e) {
+    let currentHost = this.state.host;
+    currentHost.otherAnimals = Boolean(e.target.value);
+    this.setState({
+      host: currentHost,
+    });
+  }
+
   onSelect(e) {
-    console.log(e.target.value)
     this.setState({
       type: e.target.value
     });
@@ -85,6 +151,47 @@ class SignupForm extends React.Component {
         return (<Redirect to={{ pathname: '/listings', state: this.state }}/>)
       }
     }
+
+    const formFields = this.state.type === 'petOwner' ?
+      (<div>
+        <div className="field-line">
+          <TextField floatingLabelText="Type of Pet" name="animal" onChange={this.handlePetChange} value={this.state.pet.animal}/>
+        </div>
+
+        <div className="field-line">
+          <TextField floatingLabelText="Pet Description" name="description" onChange={this.handlePetChange} value={this.state.pet.description}/>
+        </div>
+        <div className="field-line">
+          <TextField floatingLabelText="Does your pet have any special needs?" name="needs" onChange={this.handlePetChange} value={this.state.pet.needs}/>
+        </div>
+        Is your pet friendly or unfriendly with other animals?
+
+        <RadioButtonGroup name="friendly" defaultSelected="none" onChange={this.handleFriendlyChange}>
+              <RadioButton value="true" label="Friendly"/>
+              <RadioButton value="" label="Unfriendly"/>
+        </RadioButtonGroup>
+      </div>)
+      :
+      (<div>
+        Is your living space a house or an apartment?
+        <RadioButtonGroup name="homeType" defaultSelected={this.state.host.homeType} onChange={this.handleHostChange}>
+          <RadioButton value="house" label="House"/>
+          <RadioButton value="apt" label="Apartment"/>
+        </RadioButtonGroup>
+        Does your living space include a yard or outdoor area?
+        <RadioButtonGroup name="yard" defaultSelected="true" onChange={this.handleHostChange}>
+          <RadioButton value="true" label="Yes"/>
+          <RadioButton value="false" label="No"/>
+        </RadioButtonGroup>
+        Is your living space home to other animals?
+        <RadioButtonGroup name="otherAnimals" defaultSelected="none" onChange={this.handleOtherAnimalsChange}>
+          <RadioButton value="true" label="Yes"/>
+          <RadioButton value="" label="No"/>
+        </RadioButtonGroup>
+        <div className="field-line">
+          <TextField name="description" hintText="Describe yourself or your home to others" multiLine={true} rows={1} rowsMax={4} fullWidth={true} onChange={this.handleHostChange} value={this.state.host.description} />
+        </div>
+      </div>);
 
     return (
       <div>
@@ -106,13 +213,19 @@ class SignupForm extends React.Component {
               <TextField floatingLabelText="Email" name="email" onChange={this.handleChange} value={this.state.email} errorText={ this.state.errors.email }/>
             </div>
             <div className="field-line">
-              <TextField floatingLabelText="Location" name="location" onChange={this.handleChange} value={this.state.location} errorText={ this.state.errors.location }/>
+              <TextField floatingLabelText="Street Address" name="address" onChange={this.handleLocationChange} value={this.state.location.address} errorText={ this.state.errors.location }/>
+            </div>
+            <div className="field-line">
+              <TextField floatingLabelText="City" name="city" onChange={this.handleLocationChange} value={this.state.location.city} errorText={ this.state.errors.location }/>
+            </div>
+            <div className="field-line">
+              <TextField floatingLabelText="State" name="state" onChange={this.handleLocationChange} value={this.state.location.state} errorText={ this.state.errors.location }/>
             </div>
             <div className="field-line">
               <TextField floatingLabelText="ImageUrl" name="profileUrl" onChange={this.handleChange} value={this.state.profileUrl} errorText={ this.state.errors.profileUrl }/>
             </div>
-            <div className="field-line">
-              <TextField name="description" hintText="Describe yourself or your home to others" multiLine={true} rows={1} rowsMax={4} fullWidth={true} onChange={this.handleChange} value={this.state.description} errorText={ this.state.errors.description }/>
+            <div>
+              {formFields}
             </div>
             <RaisedButton type="submit" label="Submit" primary={true} fullWidth={true} />
           </form>

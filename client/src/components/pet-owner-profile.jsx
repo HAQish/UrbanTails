@@ -14,7 +14,7 @@ class PetProfile extends React.Component {
     this.state = {
       username: this.props.location.state.username,
       profileUrl: this.props.location.state.profileUrl,
-      description: this.props.location.state.description,
+      description: this.props.location.state.pet.description, //CHANGED!! BL
       location: this.props.location.state.location,
       email: this.props.location.state.email
     }
@@ -40,7 +40,7 @@ class PetProfile extends React.Component {
                 <i className="material-icons md-24 ratings">pets</i>
               </p>
               <p><b>Email: </b>{this.state.email}</p>
-              <p><b>Location: </b>{this.state.location}</p>
+              <p><b>Location: </b>{this.state.location.city}</p>
               <p><b>Description: </b></p>
               <p className="description">{this.state.description}</p>
           </Col>
