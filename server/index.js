@@ -5,7 +5,7 @@ const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const db = require('../database/index');
 const auth = require('./utils/auth');
-const gmaps = require('./utils/gmaps')
+const gmaps = require('./utils/gmaps');
 
 let app = express();
 
@@ -28,8 +28,8 @@ app.use(express.static(path.join(__dirname, '../client/dist')));
 // Express Session
 app.use(session({
   secret: 'This is our secret',
-  resave: false,
-  saveUninitialized: false,
+  resave: true,
+  saveUninitialized: true,
   store: new MongoStore({
     mongooseConnection: db.connection,
     ttl: 2 * 24 * 60 * 60
@@ -40,8 +40,22 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
-// creates new user session using Passport Local Strategy
-passport.use(new LocalStrategy((username, password, done) => {
+// creates new user session using Passport Local Strategy, might be dysfunctional
+passport.use('local', new LocalStrategy((username, password, done) => {
+  console.log("username in passport.use function in serverindex.js", username);
+  console.log("password in passport.use function in serverindex.js", password);
+  db.getUser(username, password, (err, user) => { // might need to be refactored to have username and password available
+    if (err) { console.log('error in passport local strategy get user', err); }
+    else if (!user) {
+      return done(null, false, {message: 'Unknown user'});
+    } else {
+      return done(null, user);
+    }
+  });
+}));
+
+//local login, added in later
+passport.use('local.login', new LocalStrategy((username, password, done) => {
   db.getUser(username, (err, user) => {
     if (err) { console.log('error in passport local strategy get user', err); }
     else if (!user) {
@@ -51,33 +65,47 @@ passport.use(new LocalStrategy((username, password, done) => {
     }
   });
 }));
+
 // this function was utilized when making session without passport.  may or may not be utilized with passport depending on what you want to do.
 app.use((req, res, next) => {
   next();
 });
 // validates user and logs user into a session via Express
-app.post('/login', (req, res) => {
+app.post('/login', (req, res, next) => { // think this should have authentication
+  console.log("req.body posted to /login", req.body);
   auth.validateLoginForm(req.body, (result) => {
     if (result.success) {
-      db.getUser(req.body, (err, result) => {
-        if (err) {
-          console.log(err);
-          res.status(500).send(err);
-        } else {
-          // first attempt at Express sessions without Passport
-          req.session.user = result[0];
-          res.send(result);
-        }
-      });
-    } else {
-      res.send(result);
+      console.log("result.success is truthy in post /login in serverindex.js");
+      passport.authenticate("local", {
+        successRedirect: "/",
+        failureRedirect: "/login"
+      })(req, res, next);
     }
+
+    // if (result.success) {
+    //   db.getUser(req.body, (err, result) => {
+    //     if (err) {
+    //       console.log(err);
+    //       res.status(500).send(err);
+    //     } else {
+    //       // first attempt at Express sessions without Passport
+    //       req.session.user = result[0];
+    //       res.send(result);
+    //     }
+    //   });
+    // } else {
+    //   res.send(result);
+    // }
   });
 });
 // destroys session and logs user out
 app.get('/logout', function (req, res){
+  console.log("the current user before sign out", req.user.username);
   req.logOut();
-  res.clearCookie('connect.sid', {path: '/'}).send('cleared');
+  // res.clearCookie('connect.sid', {path: '/'}).send('cleared');
+  req.session.destroy();
+  console.log("if the following is undefined or null, then the logout was successful", req.user);
+  res.send("logged out");
 });
 // checks if user is in database (utilized on first Sign Up page)
 app.post('/checkuser', (req, res) => {
@@ -98,27 +126,27 @@ app.post('/signup', async function(req, res) {
     let geoCodesRes = await gmaps.getGeoLocation(req.body);
     console.log('🌏', geoCodesRes)
     let dogParkLocate = await gmaps.getDogParks(geoCodesRes);
-    console.log('🐕', dogParkLocate);
+    console.log('🐕 line 126 in signup post, dog parks', dogParkLocate);
 
     db.saveUser(req.body, geoCodesRes, dogParkLocate, (err, result) => {
       if (err) {
         console.log('error saving user data to db:', err);
         res.status(500).send({ error: 'User already exists' });
       } else {
-        console.log('saved user data to the db:', result);
-        db.getUser(req.body, (err, result) => {
-          if (err) { res.send(err); }
-          else {
-            console.log('result db.getUser', result);
-            // creates persisting session with Passport
-            const user_id = result._id;
-            req.login(user_id, (err) => {
-              console.log('logged in...redirecting...');
-              // res.redirect('/');
-              res.send(result);
-            });
-          }
-        });
+        console.log('in post signup route in serverindex.js, saved user data to the db:', result);
+        // db.getUser(req.body, (err, result) => {
+        //   if (err) { res.send(err); }
+        //   else {
+        //     console.log('result db.getUser', result);
+        //     // creates persisting session with Passport
+        //     const user_id = result._id;
+        //     req.login(user_id, (err) => {
+        //       console.log('logged in...redirecting...');
+        //       // res.redirect('/');
+        //       res.send(result);
+        //     });
+        //   }
+        // });
       }
     });
   }
@@ -126,22 +154,83 @@ app.post('/signup', async function(req, res) {
 
 // authenticates pet owner user upon login and retrieves profile
 app.get('/pet-profile', (req, res, next) => {
-  passport.authenticate('local', function(err, user, info) {
-    if (err || !user) { return res.redirect('/login'); }
-    else {
-      return res.send(req.user);
-    }
-  })(req, res, next);
+  console.log("Heard get request for pet-profile.");
+  console.log("req.user in get /pet-profile in serverindex.js", req.user);
+  if (req.user) {
+    res.send(201);
+  }
+
+  // passport.authenticate('local', function(err, user, info) {
+  //   if (err || !user) {
+  //     console.log("err in get /pet-profile in serverindex.js", err);
+  //     console.log("user in get /pet-profile in serverindex.js", user);
+  //     return res.redirect('/login'); }
+  //   else {
+  //     console.log("req.user in get /pet-profile in serverindex.js", req.user);
+  //     console.log("req.body in get /pet-profile in serverindex.js", req.body);
+  //     return res.send(req.user);
+  //   }
+  // })(req, res, next);
+  // res.send(req.user);
 });
 // authenticates host user upon login and retrieves profile
 app.get('/host-profile', (req, res, next) => {
-  passport.authenticate('local', function(err, user, info) {
-    if (err || !user) { return res.redirect('/login'); }
-    else {
-      return res.send(req.user);
-    }
-  })(req, res, next);
+  console.log("Heard get request for host-profile.");
+  console.log("req.user in get /host-profile in serverindex.js", req.user);
+  res.send(201);
+  // passport.authenticate('local', function(err, user, info) {
+  //   if (err || !user) { return res.redirect('/login'); }
+  //   else {
+  //     console.log(req.user);
+  //     console.log(req.body);
+  //     return res.send(req.user);
+  //   }
+  // })(req, res, next);
 });
+
+//altering user profiles
+app.put("/pet-profile", function(req, res) {
+  //db.alterUserFunction(req.body);
+  //findOne({}) {
+    console.log("Heard put from app");
+    passport.authenticate('local', function(err, user, info) {
+      if (err || !user) {
+        //do something with error
+        console.log(req.body);
+        console.log(req.user);
+        res.redirect('/login');
+      } else {
+        console.log(req.body);
+        console.log(req.user);
+        // return db.alterpetprofile(req.body, req.user)
+      }
+    })
+  // }
+});
+
+app.put("/host-profile", function(req, res) {
+  //db.alterUserFunction(req.body);
+});
+
+//playmates
+app.get("/playmates", function(req, res) {
+  //db.getPlaymates;
+  //pet owners in the same city as logged in user
+  //returning user documents
+  console.log(req.user.location.city);
+  db.findPetOwnersByCity(req.user.location.city, (err, playmates) => {
+    console.log("playmates in get /playmates in serverindex.js", playmates);
+    //username, email, profileURL, pet, latLong
+    res.send(playmates.map(function(el) {
+      return {username: el.username,
+              email: el.email,
+              profileUrl: el.profileUrl,
+              latLong: el.latLong,
+              pet: el.pet}
+    }));
+  });
+})
+
 // retrieves all host listings from the database
 app.get('/getlistings', (req, res) => {
     db.getAllListings((err, result) => {
@@ -168,22 +257,48 @@ app.post('/getlistings', (req, res) => {
       }
     });
 });
+
 // creates passport session for user by serialized ID
-passport.serializeUser((user_id, done) => {
-  done(null, user_id);
+passport.serializeUser((user, done) => {
+  console.log("user in passport.serializeUser in serverindex.js", user);
+  console.log("user[0]._id in passport.serializeUser in serverindex.js", user[0]._id);
+  done(null, user[0]._id);
 });
 // deserializes the user ID for passport to deliver to the session
-passport.deserializeUser((user_id, done) => {
-  User.getUserById(user_id, (err, user) => {
+passport.deserializeUser((id, done) => {
+  console.log("id in passport.deserializeUser in serverindex.js", id);
+  db.getUserById(id, (err, user) => {
+    console.log("currently logged in as ", user.username);
     done(err, user);
   });
-  // done(null, user_id);
 });
 // wild card routing all pages to the React Router
-app.get('/*', (req, res) => {
-  res.sendFile(path.join(__dirname, '../client/dist/index.html'));
-});
+// app.get('/*', (req, res) => {
+//   res.sendFile(path.join(__dirname, '../client/dist/index.html'));
+// });
 
 app.listen(PORT, function() {
   console.log(`listening on port ${PORT}`);
 });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

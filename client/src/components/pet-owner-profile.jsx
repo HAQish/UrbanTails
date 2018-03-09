@@ -4,6 +4,7 @@ import Navbar from './navbar.jsx';
 import PlaymateMap from './playmateMap.jsx';
 import { Card } from 'material-ui';
 
+
 /*
   PetProfile Component:
   Used by login redirect and by clicking 'My Account' on listings page
@@ -20,6 +21,33 @@ class PetProfile extends React.Component {
       location: this.props.location.state.location,
       email: this.props.location.state.email
     }
+  }
+
+  putFunction(e) {
+    $.ajax({
+      type: "PUT",
+      url: "/pet-profile",
+      data: {
+      username: this.props.location.state.username + "d",
+      profileUrl: this.props.location.state.profileUrl,
+      description: this.props.location.state.description + "sd",
+      location: this.props.location.state.location,
+      email: this.props.location.state.email
+      },
+      success: function() {
+        console.log("Successful put.");
+      },
+      error: function() {
+        console.log("Unsuccessful put.");
+      }
+    })
+  }
+
+  componentDidMount() {
+    $.ajax({
+      type: "GET",
+      url: "/pet-profile"
+    })
   }
 
   render() {
@@ -52,6 +80,10 @@ class PetProfile extends React.Component {
               <p><b>Location: </b>{this.state.location.city}</p>
               <p><b>Description: </b></p>
               <p className="description">{this.state.description}</p>
+              <br /> <br />
+              <form onSubmit={this.putFunction.bind(this)}>
+              <button>Put request to update</button>
+              </form>
           </Col>
         </Row>
         <Row><Card style={style}>

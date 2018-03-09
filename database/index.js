@@ -63,11 +63,14 @@ module.exports = {
       });
   },
 //database search function to get user information
-  getUser: (data, callback) => {
-    let attemptedPassword = data.password;
-
+  getUser: (username, password, callback) => {
+    let attemptedPassword = password;
+    console.log("username in getUser function in databaseindex.js", username);
+    console.log("password in getUser function in databaseindex.js", password);
+    // console.log("data.password in getUser function in databaseindex.js", data.password);
+    // console.log("data.username in getUser function in databaseindex.js", data.username);
     User.find({})
-      .where('username').equals(data.username)
+      .where('username').equals(username)
       .exec((err, user) => {
         if (user.length === 0) {
           err = {
@@ -76,7 +79,7 @@ module.exports = {
           callback(err, null);
         } else if (user[0]) {
           let message = { errors: { password: 'Incorrect submission, try again'} };
-
+          console.log("results in getUser function in databaseindex.js after .exec", user);
           bcrypt.compare(attemptedPassword, user[0].password, (err, isMatch) => {
             if (err) { callback(err, null); }
             if (isMatch) {
@@ -96,6 +99,7 @@ module.exports = {
   //save user data
   saveUser: (data, coords, parks, callback) => {
     let plainTextPassword = data.password;
+    console.log("data in saveUser in databaseindex.js", data);
     //bcrypt password before saving it to database
     bcrypt.hash(plainTextPassword, saltRounds, (err, hash) => {
       let user = new User ({
@@ -157,6 +161,17 @@ module.exports = {
         }
       });
   },
+  findPetOwnersByCity: (city, callback) => {
+    User.find({type: "petOwner"})
+      .where("location.city").equals(city)
+      .exec((err, documents) => {
+        if (err) {
+          throw err;
+        }
+        console.log("the returned documents in findPetOwnersByCity in databaseindex.js", documents);
+        callback(null, documents);
+      })
+  },
   // utilized by seed.js file to drop database when re-seeding
   dropDatabase: () => {
     mongoose.connection.dropDatabase();
@@ -164,3 +179,24 @@ module.exports = {
   // exports mongoose connection for server to reference
   connection: mongoose.connection
 };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
