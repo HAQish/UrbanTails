@@ -3,6 +3,7 @@ import { Row, Col } from 'react-bootstrap';
 import Navbar from './navbar.jsx';
 import PlaymateMap from './playmateMap.jsx';
 import { Card } from 'material-ui';
+import $ from 'jquery';
 
 
 /*
