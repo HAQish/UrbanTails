@@ -7,20 +7,21 @@ var googleMapsClient = require('@google/maps').createClient({
 });
 
 function getGeoLocation(body) {
-  googleMapsClient.geocode({
-    address: body.location
-  })
-  .asPromise()
-  .then(function (res) {
-    if (!err) {
-      console.log(res.json.results);
-      console.log(res.json.results[0].geometry.location);
-      const coords = res.json.results[0].geometry.location;
-      return coords;
-    }
-  })
-  .then()
-  .catch(err => console.log(err));
+  const { address, city, state } = body.location;
+  let data = `${address}, ${city} ${state}`;
+  return new Promise(resolve => {
+    googleMapsClient.geocode({
+      address: data
+    }, function(err, res) {
+      if (!err) {
+        console.log('🤡', res.json.results[0].geometry.location);
+        const coords = res.json.results[0].geometry.location;
+        resolve(coords);
+      } else {
+        resolve(err);
+      }
+    });
+  });
 }
 
 function getDogParks(body) {
