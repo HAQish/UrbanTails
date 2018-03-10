@@ -5,6 +5,7 @@ const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const db = require('../database/index');
 const auth = require('./utils/auth');
+const gmaps = require('./utils/gmaps')
 
 let app = express();
 
@@ -90,56 +91,39 @@ app.post('/checkuser', (req, res) => {
 });
 // validates New User Sign Up form and saves new User to database
 app.post('/signup', async function(req, res) {
-
   let formDataRes = await auth.validateSignupForm(req.body);
-  console.log('🤠', formDataRes);
   if (!formDataRes.success) {
     res.status(500).send(result);
   } else {
-    let geoCodesRes = await gmaps.getGeoCode(req.body);
+    let geoCodesRes = await gmaps.getGeoLocation(req.body);
     console.log('🌏', geoCodesRes)
+    let dogParkLocate = await gmaps.getDogParks(geoCodesRes);
+    console.log('🐕', dogParkLocate);
+
+    db.saveUser(req.body, geoCodesRes, dogParkLocate, (err, result) => {
+      if (err) {
+        console.log('error saving user data to db:', err);
+        res.status(500).send({ error: 'User already exists' });
+      } else {
+        console.log('saved user data to the db:', result);
+        db.getUser(req.body, (err, result) => {
+          if (err) { res.send(err); }
+          else {
+            console.log('result db.getUser', result);
+            // creates persisting session with Passport
+            const user_id = result._id;
+            req.login(user_id, (err) => {
+              console.log('logged in...redirecting...');
+              // res.redirect('/');
+              res.send(result);
+            });
+          }
+        });
+      }
+    });
   }
 });
-  // validate form data => helper func
-    // if success =>
-    // get Geo codes 
-    // pass req.body and geocode obj into db.saveUser
-    // if success
-      // call db.getUser
-      // res.send user
-    // if err
-      // send error
 
-  // auth.validateSignupForm(req.body, (result) => {
-  //   if (result.success) {
-  //     console.log(result);
-  //     helper.gmaps.getGeoCode().then()
-  //     db.saveUser(req.body, (err, result) => {
-  //       if (err) {
-  //         console.log('error saving user data to db:', err);
-  //         res.status(500).send({ error: 'User already exists' });
-  //       }
-  //       else {
-  //         console.log('saved user data to the db:', result);
-  //         db.getUser(req.body, (err, result) => {
-  //           if (err) { res.send(err); }
-  //           else {
-  //             console.log('result db.getUser', result);
-  //             // creates persisting session with Passport
-  //             const user_id = result._id;
-  //             req.login(user_id, (err) => {
-  //               console.log('logged in...redirecting...');
-  //               // res.redirect('/');
-  //               res.send(result);
-  //             });
-  //           }
-  //         });
-  //       }
-  //     });
-  //   } else if (result) {
-  //     console.log(result);
-  //     res.status(500).send(result);
-  //   }
 // authenticates pet owner user upon login and retrieves profile
 app.get('/pet-profile', (req, res, next) => {
   passport.authenticate('local', function(err, user, info) {

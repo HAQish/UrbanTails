@@ -26,6 +26,7 @@ const UserSchema = new Schema({
     state: String
   },
   latLong: {lat: Number, lng: Number},
+  dogParks: Array,
   pet: {
     animal: String,
     friendly: Boolean,
@@ -93,7 +94,7 @@ module.exports = {
   },
 
   //save user data
-  saveUser: (data, coords, callback) => {
+  saveUser: (data, coords, parks, callback) => {
     let plainTextPassword = data.password;
     //bcrypt password before saving it to database
     bcrypt.hash(plainTextPassword, saltRounds, (err, hash) => {
@@ -105,6 +106,7 @@ module.exports = {
         type: data.type,
         location: data.location,
         latLong: coords,
+        dogParks: parks,
         pet: {
           animal: data.pet.animal,
           friendly: data.pet.friendly,
@@ -121,8 +123,8 @@ module.exports = {
 
       user.save((err, user) => {
         if (err) {
-          console.log('database error saving user, duplicate key');
-          callback('User already exists', null);
+          console.log('database error saving user', err);
+          callback(err, null);
         } else {
           callback(null, user);
         }

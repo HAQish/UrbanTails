@@ -1,42 +1,32 @@
-const rp = require('request-promise');
 const API = process.env.API || require('../../config/googleAPI.config.js');
-const Promise = require('q').Promise;
-
-var googleMapsClient = require('@google/maps').createClient({
-  key: API
-});
+const axios = require('axios');
 
 function getGeoLocation(body) {
   const { address, city, state } = body.location;
-  let data = `${address}, ${city} ${state}`;
+  const street = address.split(' ').join('+');
+  const googleApiAddress = `https://maps.google.com/maps/api/geocode/json?address=${street},+${city},+${state}&key=${API.KEY}`;
   return new Promise(resolve => {
-    googleMapsClient.geocode({
-      address: data
-    }, function(err, res) {
-      if (!err) {
-        console.log('🤡', res.json.results[0].geometry.location);
-        const coords = res.json.results[0].geometry.location;
-        resolve(coords);
-      } else {
-        resolve(err);
-      }
-    });
-  });
+    axios.get(googleApiAddress)
+    .then(response => {
+      response ? 
+      resolve(response.data.results[0].geometry.location) :
+      resolve('WARNING: Zero results from Google Geocode');
+    })
+  })
 }
 
-function getDogParks(body) {
-  googleMapsClient.placesNearby({
-    query: 'dog park',
-    language: 'en',
-    location: body.location,
-    radius: 15000
+function getDogParks(location) {
+  const { lat, lng } = location;
+  const googleDogsAddress = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${lat},${lng}&radius=7500&keyword=dog+park&key=${API.KEY}`
+  return new Promise (resolve => {
+    axios.get(googleDogsAddress)
+    .then(response => {
+      console.log('🐶', response);
+      response ?
+        resolve(response.data.results) :
+        resolve('WARNING: Zero results from Google Geocode');
+    })
   })
-  .asPromise()
-  .then(function(err, res) {
-    console.log(res.json.results);
-  })
-  .catch(err => console.log(err))
-  .then(next());
 }
 
 function getPlaymates(body) {
