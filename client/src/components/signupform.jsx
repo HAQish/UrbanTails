@@ -213,13 +213,13 @@ class SignupForm extends React.Component {
               <TextField floatingLabelText="Email" name="email" onChange={this.handleChange} value={this.state.email} errorText={ this.state.errors.email }/>
             </div>
             <div className="field-line">
-              <TextField floatingLabelText="Street Address" name="address" onChange={this.handleLocationChange} value={this.state.location.address} />
+              <TextField floatingLabelText="Street Address" name="address" onChange={this.handleLocationChange} value={this.state.location.address} errorText={ this.state.errors.location }/>
             </div>
             <div className="field-line">
-              <TextField floatingLabelText="City" name="city" onChange={this.handleLocationChange} value={this.state.location.city} />
+              <TextField floatingLabelText="City" name="city" onChange={this.handleLocationChange} value={this.state.location.city} errorText={ this.state.errors.location }/>
             </div>
             <div className="field-line">
-              <TextField floatingLabelText="State" name="state" onChange={this.handleLocationChange} value={this.state.location.state} />
+              <TextField floatingLabelText="State" name="state" onChange={this.handleLocationChange} value={this.state.location.state} errorText={ this.state.errors.location }/>
             </div>
             <div className="field-line">
               <TextField floatingLabelText="ImageUrl" name="profileUrl" onChange={this.handleChange} value={this.state.profileUrl} errorText={ this.state.errors.profileUrl }/>

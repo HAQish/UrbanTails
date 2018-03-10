@@ -1,6 +1,7 @@
 import React from 'react';
 import { Row, Col } from 'react-bootstrap';
 import Navbar from './navbar.jsx';
+import PlaymateMap from './playmateMap.jsx';
 
 /*
   PetProfile Component:
@@ -45,6 +46,9 @@ class PetProfile extends React.Component {
               <p className="description">{this.state.description}</p>
           </Col>
         </Row>
+        <div>
+          <PlaymateMap />
+        </div>
       </div>
     )
   }
