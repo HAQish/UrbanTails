@@ -39,7 +39,7 @@ class SignupForm extends React.Component {
       host: {
         homeType: '',
         yard: '',
-        otherAnimals: null,
+        otherAnimals: true,
         description: '',
       }
     };
@@ -54,7 +54,7 @@ class SignupForm extends React.Component {
 
   handleSubmit(e) {
     e.preventDefault();
-
+    console.log(this.state);
     let clearedState = {}
     $.ajax({
       type: 'POST',
@@ -179,7 +179,7 @@ class SignupForm extends React.Component {
           <RadioButton value="apt" label="Apartment"/>
         </RadioButtonGroup>
         Does your living space include a yard or outdoor area?
-        <RadioButtonGroup name="yard" defaultSelected="true" onChange={this.handleHostChange}>
+        <RadioButtonGroup name="yard" defaultSelected="none" onChange={this.handleHostChange}>
           <RadioButton value="true" label="Yes"/>
           <RadioButton value="false" label="No"/>
         </RadioButtonGroup>
