@@ -26,9 +26,17 @@ function validateSignupForm(formData, callback) {
     errors.profileUrl = 'Please provide a correct url.';
   }
 
-  if (!formData || typeof formData.location !== 'string' || formData.location.trim().length === 0) {
+  if (!formData || typeof formData.location.address !== 'string' || formData.location.address.trim().length === 0) {
     isFormValid = false;
-    errors.location = 'Please provide a location.';
+    errors.location = 'Please provide a Street Address.';
+  }
+  if (!formData || typeof formData.location.city !== 'string' || formData.location.city.trim().length === 0) {
+    isFormValid = false;
+    errors.location = 'Please provide a City.';
+  }
+  if (!formData || typeof formData.location.state !== 'string' || formData.location.state.trim().length === 0) {
+    isFormValid = false;
+    errors.location = 'Please provide a State.';
   }
 
   if (!isFormValid) {

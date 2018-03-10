@@ -14,14 +14,30 @@ mongoose.connect(uristring, (err) => {
 });
 
 //set schema
-let UserSchema = new Schema({
+const UserSchema = new Schema({
   username: { type: String, unique: true },
-  email: { type: String, unique: true},
+  email: String,
   password: String,
   profileUrl: String,
   type: String,
-  location: String,
-  description: String
+  location: {
+    address: String,
+    city: String,
+    state: String
+  },
+  latLong: {lat: Number, lng: Number},
+  pet: {
+    animal: String,
+    friendly: Boolean,
+    description: String,
+    needs: String
+  },
+  host: {
+    homeType: String,
+    yard: String,
+    otherAnimals: Boolean,
+    description: String
+  }
 });
 
 //compile schema into a model
@@ -57,8 +73,7 @@ module.exports = {
             errors: { username: 'User does not exist' }
           };
           callback(err, null);
-        }
-        else if (user[0]) {
+        } else if (user[0]) {
           let message = { errors: { password: 'Incorrect submission, try again'} };
 
           bcrypt.compare(attemptedPassword, user[0].password, (err, isMatch) => {
@@ -78,18 +93,30 @@ module.exports = {
   },
 
   //save user data
-  saveUser: (data, callback) => {
+  saveUser: (data, coords, callback) => {
     let plainTextPassword = data.password;
     //bcrypt password before saving it to database
     bcrypt.hash(plainTextPassword, saltRounds, (err, hash) => {
       let user = new User ({
-      username: data.username,
-      email: data.email,
-      password: hash,
-      profileUrl: data.profileUrl,
-      type: data.type,
-      location: data.location,
-      description: data.description
+        username: data.username,
+        email: data.email,
+        password: hash,
+        profileUrl: data.profileUrl,
+        type: data.type,
+        location: data.location,
+        latLong: coords,
+        pet: {
+          animal: data.pet.animal,
+          friendly: data.pet.friendly,
+          description: data.pet.description,
+          needs: data.pet.needs
+        },
+        host: {
+          homeType: data.host.homeType,
+          yard: data.host.yard,
+          otherAnimals: data.host.otherAnimals,
+          description: data.host.description
+        }
       });
 
       user.save((err, user) => {

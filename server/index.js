@@ -89,10 +89,35 @@ app.post('/checkuser', (req, res) => {
   });
 });
 // validates New User Sign Up form and saves new User to database
-app.post('/signup', (req, res) => {
+app.post('/signup', async function(req, res) {
+
+  let formDataRes = await auth.validateSignupForm(req.body);
+  if (!formDataRes.success) {
+    res.status(500).send(result);
+  } else {
+    let geoCodesRes = await gmaps.getGeoCode(req.body);
+  }
+  // validate form data => helper func
+    // if success =>
+    // get Geo codes 
+    // pass req.body and geocode obj into db.saveUser
+    // if success
+      // call db.getUser
+      // res.send user
+    // if err
+      // send error
+
+
+
+
+
+
+
+
   auth.validateSignupForm(req.body, (result) => {
     if (result.success) {
       console.log(result);
+      helper.gmaps.getGeoCode().then()
       db.saveUser(req.body, (err, result) => {
         if (err) {
           console.log('error saving user data to db:', err);
