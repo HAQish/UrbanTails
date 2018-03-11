@@ -8,7 +8,7 @@ function getGeoLocation(body) {
   return new Promise(resolve => {
     axios.get(googleApiAddress)
     .then(response => {
-      response ? 
+      response ?
       resolve(response.data.results[0].geometry.location) :
       resolve('WARNING: Zero results from Google Geocode');
     })
@@ -21,7 +21,7 @@ function getDogParks(location) {
   return new Promise (resolve => {
     axios.get(googleDogsAddress)
     .then(response => {
-      console.log('🐶', response);
+      // console.log('🐶', response);
       response ?
         resolve(response.data.results) :
         resolve('WARNING: Zero results from Google Geocode');

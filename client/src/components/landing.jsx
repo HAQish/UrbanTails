@@ -19,7 +19,7 @@ class Landing extends React.Component {
   }
 
   componentDidMount() {
-    $.get('/logout');
+    // $.get('/logout');
   }
 
   render() {
