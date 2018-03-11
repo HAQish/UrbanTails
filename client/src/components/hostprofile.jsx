@@ -17,13 +17,20 @@ class HostProfile extends React.Component {
     this.state = {
       username: this.props.location.state.username,
       imageUrl: this.props.location.state.profileUrl,
-      location: this.props.location.state.location,
+      //location: this.props.location.state.location, <<< ??? PROBLEMATIC
       description: this.props.location.state.host.description, //CHANGED!! BL
       email: this.props.location.state.email
     };
   }
 
   render () {
+
+    const style = {
+      margin: 'auto',
+      width: '70vw',
+      height: '70vh',
+    }
+
     return (
       <div>
         <Navbar link="Logout" linkurl="/" />
@@ -49,8 +56,8 @@ class HostProfile extends React.Component {
           </div>
         </div><br/>
         <div>
-          <Card>
-            <DogParkMap />
+          <Card style={style}>
+            <DogParkMap location={this.props.location.state}/>
           </Card>
         </div>
         <div className='row'>

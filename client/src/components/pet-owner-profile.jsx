@@ -2,6 +2,7 @@ import React from 'react';
 import { Row, Col } from 'react-bootstrap';
 import Navbar from './navbar.jsx';
 import PlaymateMap from './playmateMap.jsx';
+import { Card } from 'material-ui';
 
 /*
   PetProfile Component:
@@ -22,6 +23,13 @@ class PetProfile extends React.Component {
   }
 
   render() {
+
+    const style = {
+      margin: 'auto',
+      width: '70vw',
+      height: '70vh',
+    }
+
     return (
       <div>
         <Navbar link="Logout" linkurl="/" />
@@ -46,9 +54,10 @@ class PetProfile extends React.Component {
               <p className="description">{this.state.description}</p>
           </Col>
         </Row>
-        <div>
-          <PlaymateMap />
-        </div>
+        <Row><Card style={style}>
+          <PlaymateMap location={this.props.location.state}/>
+        </Card>
+        </Row>
       </div>
     )
   }

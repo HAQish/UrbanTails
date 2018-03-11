@@ -12,13 +12,6 @@ class Playmate extends React.Component {
 
   render() {
 
-    const playmates = this.state.playmates.map(function(playmate) {
-      return (
-        <Card>
-        </Card>
-      )
-    });
-
     return (
       <div>
         <Navbar />
