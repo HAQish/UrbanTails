@@ -26,7 +26,8 @@ class PetProfile extends React.Component {
       editing: {
         editImg: false,
         editInfo: ''
-      }
+      },
+      updated: false
     }
     this.handleChange = this.handleChange.bind(this);
     this.handleImgChange = this.handleImgChange.bind(this);
@@ -83,6 +84,27 @@ class PetProfile extends React.Component {
     let val = this.state[name];
     console.log('🤡', val);
     // Send info that was changed to db
+
+    $.ajax({
+      type: 'POST',
+      url: '/petowner',
+      data: {
+        name: name,
+        val: val
+      },
+      success: (data) => {
+        this.setState({
+          updated: true
+        });
+      },
+      error: (data) => {
+        this.setState({
+          errors: data.responseJSON.errors
+        })
+      }
+    });
+
+    this.setState(clearedState);
   }
 
   handleImgSubmit(e) {

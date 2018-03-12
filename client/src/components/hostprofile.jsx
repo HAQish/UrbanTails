@@ -2,7 +2,7 @@ import React from 'react';
 import Calendar from 'react-calendar';
 import Navbar from './navbar.jsx';
 import DogParkMap from './dogParkMap.jsx';
-import { Card } from 'material-ui';
+import { Card, Row, Col, TextField, RaisedButton } from 'material-ui';
 
 /*
   HostProfile Component:
