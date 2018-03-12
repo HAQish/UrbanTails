@@ -43,15 +43,16 @@ class HostListing extends React.Component {
 
   render() {
     let contact = 'Contact ' + this.props.host.username;
+    let condition = this.props.host.host.yard === "true" ? "does not have" : "has"
     return (
       <Row className="host-listing" style={this.state.style} onMouseLeave={this.mouseOut} onMouseEnter={this.mouseOver} >
-        <Col md={5}>
-          <img style={{ width: '300px', height: '250px'}} className="" src={this.props.host.profileUrl}/>
-        </Col>
+
         <Col md={5} className="host-content" >
           <h2>{this.props.host.username}</h2>
-          <h5>{this.props.host.location.city}</h5>
-          <p>{this.props.host.host.description}</p>
+          <h5>{this.props.host.location.address}, {this.props.host.location.city}, {this.props.host.location.state}</h5>
+          Description: <h3>{this.props.host.host.description}</h3>
+          <h2>Type of home: {this.props.host.host.homeType}</h2>
+          This house {condition} a front yard.
           <div>
             <i className="material-icons md-24 ratings">pets</i>
             <i className="material-icons md-24 ratings">pets</i>

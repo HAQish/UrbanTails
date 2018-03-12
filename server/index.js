@@ -161,7 +161,7 @@ app.get('/pet-profile', (req, res, next) => {
   console.log("Heard get request for pet-profile.");
   console.log("req.user in get /pet-profile in serverindex.js", req.user);
   if (req.user) {
-    res.send(201);
+    res.send(req.user);
   }
 
   // passport.authenticate('local', function(err, user, info) {
@@ -181,7 +181,7 @@ app.get('/pet-profile', (req, res, next) => {
 app.get('/host-profile', (req, res, next) => {
   console.log("Heard get request for host-profile.");
   console.log("req.user in get /host-profile in serverindex.js", req.user);
-  res.send(201);
+  res.send(req.user);
   // passport.authenticate('local', function(err, user, info) {
   //   if (err || !user) { return res.redirect('/login'); }
   //   else {

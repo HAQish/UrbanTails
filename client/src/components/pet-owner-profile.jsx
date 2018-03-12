@@ -113,25 +113,25 @@ class PetProfile extends React.Component {
     // send profileUrl to the db
   }
 
-  putFunction(e) {
-    $.ajax({
-      type: "PUT",
-      url: "/pet-profile",
-      data: {
-      username: this.props.location.state.username + "d",
-      profileUrl: this.props.location.state.profileUrl,
-      description: this.props.location.state.description + "sd",
-      location: this.props.location.state.location,
-      email: this.props.location.state.email
-      },
-      success: function() {
-        console.log("Successful put.");
-      },
-      error: function() {
-        console.log("Unsuccessful put.");
-      }
-    })
-  }
+  // putFunction(e) {
+  //   $.ajax({
+  //     type: "PUT",
+  //     url: "/pet-profile",
+  //     data: {
+  //     username: this.props.location.state.username + "d",
+  //     profileUrl: this.props.location.state.profileUrl,
+  //     description: this.props.location.state.description + "sd",
+  //     location: this.props.location.state.location,
+  //     email: this.props.location.state.email
+  //     },
+  //     success: function() {
+  //       console.log("Successful put.");
+  //     },
+  //     error: function() {
+  //       console.log("Unsuccessful put.");
+  //     }
+  //   })
+  // }
 
   componentDidMount() {
     $.ajax({

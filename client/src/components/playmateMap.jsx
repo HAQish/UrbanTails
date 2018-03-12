@@ -2,10 +2,29 @@ import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import {Map, GoogleApiWrapper, Marker} from 'google-maps-react';
 import Key from './../../../config/googleAPI.config.js';
+import Navbar from './navbar.jsx';
+import $ from 'jquery';
 
 class PlaymateMap extends Component {
   constructor(props) {
     super(props)
+    this.state = {
+      playmates: []
+    }
+  }
+
+  componentWillMount() {
+    $.ajax({
+      type: "GET",
+      url: "/playmates",
+      success: (data) => {
+        console.log("success in playmateMap", data);
+        this.setState({playmates: data});
+      },
+      error: (error) => {
+        console.log("error in ajax call playmateMap", error);
+      }
+    })
   }
 
   render() {
@@ -13,6 +32,11 @@ class PlaymateMap extends Component {
       width: '70vw',
       height: '70vh'
     }
+
+   let playmates = this.state.playmates.map((playmate, index) => (
+        <Marker position={{lat: playmate.latLong.lat, lng: playmate.latLong.lng}} key={index}
+        />
+    ));
 
     return (
       <Map google={this.props.google} initialCenter={{
@@ -22,6 +46,7 @@ class PlaymateMap extends Component {
 
         <Marker onClick={this.onMarkerClick}
                 name={'Current location'} />
+          {playmates}
       </Map>
     )
   }

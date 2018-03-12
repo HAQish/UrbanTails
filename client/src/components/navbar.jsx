@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import Searchbar from './searchbar.jsx';
+import $ from 'jquery';
 
 /*
   Navbar Component:
@@ -22,11 +23,20 @@ class Navbar extends React.Component {
     this.clickHandler = this.clickHandler.bind(this);
   }
 
+  // clickHandler () {
+  //   if(this.state.linkurl === '/') {
+  //     fetch('/logout')
+  //     .then((data) => console.log('success logging out in react ap', data))
+  //     .catch((err) => console.log('error with click handler logging out in react app', err));
+  //   }
+  // }
+
   clickHandler () {
     if(this.state.linkurl === '/') {
-      fetch('/logout')
-      .then((data) => console.log('success', data))
-      .catch((err) => console.log('error with click handler', err));
+     $.ajax({
+      type: "GET",
+      url: "/logout"
+     })
     }
   }
 

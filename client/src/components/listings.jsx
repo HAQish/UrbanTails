@@ -16,33 +16,27 @@ class Listings extends React.Component {
     super(props);
     this.state = {
       user: this.props.location.state,
-      listings: [
-        {
-          "username":"Maria",
-          "profileUrl":"https://source.unsplash.com/3wylDrjxH-E",
-          "type": "host",
-          "location": "Los Angeles",
-          "description":"I've got a wonderful patio and serve meals outside when the weather is nice."
-        }
-      ]
+      listings: []
     }
-    this.setResults = this.setResults.bind(this);
+    // this.setResults = this.setResults.bind(this);
+    // this.setListings = this.setListings.bind(this);
   }
 
-  setListings(list) {
-    this.setState({
-      listings: list
-    });
-  }
+  // setListings(list) {
+  //   this.setState({
+  //     listings: list
+  //   });
+  // }
 
   componentWillMount() {
     $.ajax({
       type: 'GET',
       url: '/getlistings',
       success: (data) => {
-        console.log('🌴', data);
-        if (data.length > 1) {
-          this.setListings(data);
+        console.log('🌴 in component will mount in listings.jsx, data returned from server, all host documents', data);
+        if (data) {
+          // this.setListings(data);
+          this.setState({listings: data})
         }
       },
       error: (data) => {
@@ -51,23 +45,25 @@ class Listings extends React.Component {
     });
   }
 
-  setResults(searchresults) {
-    this.setListings(searchresults);
-  }
+  // setResults(searchresults) {
+  //   this.setListings(searchresults);
+  // }
 
   render() {
-    let listings = this.state.listings.reverse();
-    console.log('LISTINGS!!!!!!!!', listings);
-    let hostList = listings.map((hostsummary, index) => {
-      <HostListing key ={ index } host={ hostsummary }/>
-    });
-    console.log('🐶', hostList);
+    // let listings = this.state.listings.reverse();
+    console.log('LISTINGS before the mapping function in listings.jsx', this.state.listings);
+    // let hostList = listings.map((hostsummary) => {
+    //   // console.log("host summary in mapping function in listings.jsx", hostsummary);
+    //   <div><HostListing host={ hostsummary }/></div>
+    // });
+    // console.log('host list in listings.jsx component, after the mapping', hostList);
     return (
        <div>
         <Navbar link="My Account" linkurl="/pet-profile" user={this.state.user} setresults={this.setResults} search={true}/>
         <ListingsCarousel listings={this.state.listings}/>
         <div className="container">
-          { hostList }
+          {this.state.listings.map(listItem => <div><HostListing host={listItem}/></div>)}
+
         </div>
       </div>
     )
@@ -75,3 +71,7 @@ class Listings extends React.Component {
 }
 
 module.exports = Listings;
+
+
+
+
