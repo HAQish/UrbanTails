@@ -32,7 +32,7 @@ class SignupForm extends React.Component {
       },
       pet: {
         animal: '',
-        friendly: null,
+        friendly: true,
         description: '',
         needs: '',
       },
@@ -41,7 +41,8 @@ class SignupForm extends React.Component {
         yard: '',
         otherAnimals: true,
         description: '',
-      }
+      },
+      user: {}
     };
     this.handleChange = this.handleChange.bind(this);
     this.onSelect = this.onSelect.bind(this);
@@ -50,6 +51,7 @@ class SignupForm extends React.Component {
     this.handleLocationChange = this.handleLocationChange.bind(this);
     this.handleFriendlyChange = this.handleFriendlyChange.bind(this);
     this.handleOtherAnimalsChange = this.handleOtherAnimalsChange.bind(this);
+    this.login = this.login.bind(this);
   }
 
   handleSubmit(e) {
@@ -68,13 +70,14 @@ class SignupForm extends React.Component {
         profileUrl: this.state.profileUrl,
         location: this.state.location,
         pet: this.state.pet,
-        host: this.state.host,
+        host: this.state.host
       },
       success: (data) => {
+        console.log(data);
         this.setState({
-          redirectToProfile: true,
-          user: data,
+          user: data[0],
         });
+        this.login();
       },
       error: (data) => {
         this.setState({
@@ -84,6 +87,36 @@ class SignupForm extends React.Component {
     });
 
     this.setState(clearedState);
+  }
+
+  login() {
+    console.log('🤡', this.state.user)
+    $.ajax({
+      type: 'POST',
+      url: '/login',
+      data: {
+        username: this.state.username,
+        password: this.state.password
+      },
+      success: (data) => {
+        if (data.errors) {
+          console.log(data.errors)
+          this.setState({
+            errors: data.errors
+          });
+        } else {
+          this.setState({
+            redirectToProfile: true,
+          });
+        }
+      },
+      error: (data) => {
+        console.log(data);
+        this.setState({
+          errors: data.responseJSON.errors
+        });
+      }
+    });
   }
 
   handleChange(e) {
@@ -146,9 +179,9 @@ class SignupForm extends React.Component {
     const redirectToProfile = this.state.redirectToProfile;
     if (redirectToProfile) {
       if (this.state.type === 'host') {
-        return(<Redirect to={{ pathname: '/host-profile', state: this.state }}/>)
+        return(<Redirect to={{ pathname: '/host-profile', state: this.state.user }}/>)
       } else {
-        return (<Redirect to={{ pathname: '/listings', state: this.state }}/>)
+        return (<Redirect to={{ pathname: '/listings', state: this.state.user }}/>)
       }
     }
 
@@ -197,7 +230,7 @@ class SignupForm extends React.Component {
       <div>
         <Navbar link="Login" linkurl="/login"/>
         <Card className="container signupform">
-          <form action="/" onSubmit={this.handleSubmit.bind(this)} >
+          <form onSubmit={this.handleSubmit.bind(this)} >
             <h2>Create Your Profile</h2>
             <RadioButtonGroup name="Usertype" defaultSelected="petOwner" onChange={this.onSelect}>
               <RadioButton value="host" label="Host"/>

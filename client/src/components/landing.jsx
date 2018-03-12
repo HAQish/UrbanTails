@@ -61,25 +61,20 @@ class Landing extends React.Component {
           <hr/>
           <h2 className="heading-landing">About Us</h2>
           <Row className="landing-content padded">
-            <Col md={3} className="landing-box">
-              <Avatar src="https://avatars3.githubusercontent.com/u/22921336?s=460&v=4" size={100}/>
-              <h4>Annah Patterson</h4>
+            <Col md={4} className="landing-box">
+              <Avatar src="https://avatars0.githubusercontent.com/u/24845707?s=400&v=4" size={100}/>
+              <h4>Habib Qureshi</h4>
               <p>Lead Engineer</p>
             </Col>
-            <Col md={3}>
-              <Avatar src="https://i.pinimg.com/736x/97/27/a5/9727a533b8d35ec176155e92fd643477--pet-tattoos-wall-tattoo.jpg" size={100}/>
-              <h4>Michael Shin</h4>
+            <Col md={4}>
+              <Avatar src="https://avatars1.githubusercontent.com/u/10205840?s=400&u=4a3d1a341b94be1a0e7f861bfeeab016918a0878&v=4" size={100}/>
+              <h4>Kyle McLeod</h4>
               <p>Scrum Master</p>
             </Col>
-            <Col md={3}>
-              <Avatar src="https://avatars0.githubusercontent.com/u/28540710?s=460&v=4" size={100}/>
-              <h4>Queenie Smith</h4>
+            <Col md={4}>
+              <Avatar src="https://avatars0.githubusercontent.com/u/19222963?s=400&v=4" size={100}/>
+              <h4>Brandon Little</h4>
               <p>Product Owner</p>
-            </Col>
-            <Col md={3}>
-              <Avatar src="https://avatars2.githubusercontent.com/u/31011353?s=400&v=4" size={100}/>
-              <h4>Yufan Wang</h4>
-              <p>Lead Engineer</p>
             </Col>
           </Row>
         </div>

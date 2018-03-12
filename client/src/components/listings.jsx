@@ -35,12 +35,13 @@ class Listings extends React.Component {
     });
   }
 
-  componentDidMount() {
+  componentWillMount() {
     $.ajax({
       type: 'GET',
       url: '/getlistings',
       success: (data) => {
-        if (data.length > 3) {
+        console.log('🌴', data);
+        if (data.length > 1) {
           this.setListings(data);
         }
       },
@@ -56,11 +57,13 @@ class Listings extends React.Component {
 
   render() {
     let listings = this.state.listings.reverse();
+    console.log('LISTINGS!!!!!!!!', listings);
     let hostList = listings.map((hostsummary, index) => {
-      return <HostListing key ={ index } host={ hostsummary }/>
+      <HostListing key ={ index } host={ hostsummary }/>
     });
+    console.log('🐶', hostList);
     return (
-      <div>
+       <div>
         <Navbar link="My Account" linkurl="/pet-profile" user={this.state.user} setresults={this.setResults} search={true}/>
         <ListingsCarousel listings={this.state.listings}/>
         <div className="container">

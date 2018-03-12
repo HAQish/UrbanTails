@@ -71,41 +71,45 @@ app.use((req, res, next) => {
   next();
 });
 // validates user and logs user into a session via Express
-app.post('/login', (req, res, next) => { // think this should have authentication
-  console.log("req.body posted to /login", req.body);
-  auth.validateLoginForm(req.body, (result) => {
-    if (result.success) {
-      console.log("result.success is truthy in post /login in serverindex.js");
-      passport.authenticate("local", {
-        successRedirect: "/",
-        failureRedirect: "/login"
-      })(req, res, next);
-    }
+// app.post('/login', (req, res, next) => { // think this should have authentication
+//   console.log("req.body posted to /login", req.body);
+//   auth.validateLoginForm(req.body, (result) => {
+//     if (result.success) {
+//       console.log("result.success is truthy in post /login in serverindex.js");
+//       passport.authenticate("local", {
+//         successRedirect: '/',
+//         failureRedirect: '/login'
+//       })(req, res, next);
+//     };
+//     // () => {
+//     //   res.send(result);
+//         // db.getUser(req.body.username, req.body.password, (err, result) => {
+//         //   if (err) {
+//         //     console.log(err);
+//         //     res.status(500).send(err);
+//         //   } else {
+//         //     // first attempt at Express sessions without Passport
+//         //     //req.session.user = result[0];
+//         //     console.log('ZZZZZZZZZZ', result);
+//         //     res.send(result);
+//         //   }
+//         // })
+//   });
+// });
 
-    // if (result.success) {
-    //   db.getUser(req.body, (err, result) => {
-    //     if (err) {
-    //       console.log(err);
-    //       res.status(500).send(err);
-    //     } else {
-    //       // first attempt at Express sessions without Passport
-    //       req.session.user = result[0];
-    //       res.send(result);
-    //     }
-    //   });
-    // } else {
-    //   res.send(result);
-    // }
-  });
-});
+
+app.post('/login', passport.authenticate('local'), function(req, res) {
+  console.log('req.user', req.user[0]._doc);
+  res.send(req.user[0]._doc);
+})
 // destroys session and logs user out
 app.get('/logout', function (req, res){
-  console.log("the current user before sign out", req.user.username);
+  console.log("the current user before sign out", req.user);
   req.logOut();
   // res.clearCookie('connect.sid', {path: '/'}).send('cleared');
   req.session.destroy();
   console.log("if the following is undefined or null, then the logout was successful", req.user);
-  res.send("logged out");
+  res.redirect('/');
 });
 // checks if user is in database (utilized on first Sign Up page)
 app.post('/checkuser', (req, res) => {
@@ -134,19 +138,19 @@ app.post('/signup', async function(req, res) {
         res.status(500).send({ error: 'User already exists' });
       } else {
         console.log('in post signup route in serverindex.js, saved user data to the db:', result);
-        // db.getUser(req.body, (err, result) => {
-        //   if (err) { res.send(err); }
-        //   else {
-        //     console.log('result db.getUser', result);
-        //     // creates persisting session with Passport
-        //     const user_id = result._id;
-        //     req.login(user_id, (err) => {
-        //       console.log('logged in...redirecting...');
-        //       // res.redirect('/');
-        //       res.send(result);
-        //     });
-        //   }
-        // });
+        db.getUser(req.body.username, req.body.password, (err, result) => {
+          if (err) { res.send(err); }
+          else {
+            console.log('result db.getUser', result);
+            // creates persisting session with Passport
+            const user_id = result._id;
+            req.login(user_id, (err) => {
+              console.log('logged in...redirecting...');
+              // res.redirect('/');
+              res.send(result);
+            });
+          }
+        });
       }
     });
   }

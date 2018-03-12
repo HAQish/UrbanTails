@@ -37,6 +37,7 @@ class Login extends React.Component {
   }
 
   login(userData) {
+    console.log('😎', userData);
     this.setState({
       redirectToProfile: true,
       user: userData
@@ -61,14 +62,13 @@ class Login extends React.Component {
         password: this.state.password
       },
       success: (data) => {
-        console.log(data.errors);
         if (data.errors) {
           console.log(data.errors)
           this.setState({
             errors: data.errors
           });
         } else {
-          this.login(data[0]);
+          this.login(data);
         }
       },
       error: (data) => {

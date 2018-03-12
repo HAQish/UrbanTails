@@ -17,9 +17,11 @@ class HostProfile extends React.Component {
     this.state = {
       username: this.props.location.state.username,
       imageUrl: this.props.location.state.profileUrl,
-      //location: this.props.location.state.location, <<< ??? PROBLEMATIC
-      description: this.props.location.state.host.description, //CHANGED!! BL
-      email: this.props.location.state.email
+      location: this.props.location.state.location,
+      host: this.props.location.state.host, //CHANGED!! BL
+      email: this.props.location.state.email,
+      dogParks: this.props.location.state.dogParks,
+      latLong: this.props.location.state.latLong
     };
   }
 
@@ -50,23 +52,27 @@ class HostProfile extends React.Component {
               <i className="material-icons md-24 ratings">pets</i>
             </p>
             <p><b>Email: </b>{this.state.email}</p>
-            <p><b>Location: </b>{this.state.location}</p>
+            <p><b>Location: </b>{this.state.location.address}, {this.state.location.city} {this.state.location.state}</p>
             <p><b>Description: </b></p>
-            <p className="description">{this.state.description}</p>
+            <p className="description">{this.state.host.description}</p>
           </div>
         </div><br/>
+        <div><h2 className="col-sm-6 col-sm-offset-3">DOG PARKS NEAR ME</h2></div>
+        <br />
+        <br />
+        <br />
         <div>
           <Card style={style}>
             <DogParkMap location={this.props.location.state}/>
           </Card>
         </div>
-        <div className='row'>
+        {/* <div className='row'>
           <div style={{ paddingLeft: '10%' }} className='col-md-4' className="host-content">
             <div style= {{ maxWidth: '300px' }}>
               <Calendar className="react-calendar" />
             </div>
           </div>
-        </div>
+        </div> */}
       </div>
     )
   }

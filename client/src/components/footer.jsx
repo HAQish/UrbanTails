@@ -11,10 +11,10 @@ const Footer = (props) => {
         <div className="container">
           <div className="row">
             <div className="col-sm-8">
-              <p>© {new Date().getFullYear()} | Annah Patterson | Queenie Smith | Michael Shin | Yufan Wang |</p>
+              <p>© {new Date().getFullYear()} | Kyle McLeod | Habib Qureshi | Brandon Little |</p>
             </div>
             <div className="col-sm-4 footer-right">
-              <a href="https://github.com/UrbanTails/UrbanTails">Github Repository</a>
+              <a href="https://github.com/Agora-Group/UrbanTails">Github Repository</a>
             </div>
           </div>
         </div>

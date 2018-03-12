@@ -19,6 +19,15 @@ class Navbar extends React.Component {
       user: this.props.user,
       setresults: this.props.setresults
     }
+    this.clickHandler = this.clickHandler.bind(this);
+  }
+
+  clickHandler () {
+    if(this.state.linkurl === '/') {
+      fetch('/logout')
+      .then((data) => console.log('success', data))
+      .catch((err) => console.log('error with click handler', err));
+    }
   }
 
   render() {
@@ -33,7 +42,7 @@ class Navbar extends React.Component {
             </div>
             { this.props.search ? <Searchbar setresults={this.state.setresults}/> : null }
             <ul className="nav navbar-nav navbar-right">
-              <li><Link to={{ pathname: this.state.linkurl, state: this.state.user }}>{this.state.link}</Link></li>
+              <li><Link onClick={this.clickHandler} to={{ pathname: this.state.linkurl, state: this.state.user }}>{this.state.link}</Link></li>
             </ul>
           </div>
         </nav>

@@ -29,6 +29,10 @@ class HostListing extends React.Component {
     });
   }
 
+  componentDidMount() {
+    console.log('🇺🇸', this.props.host);
+  }
+
   mouseOut() {
     this.setState({style: {backgroundColor: 'white'}});
   }
@@ -46,8 +50,8 @@ class HostListing extends React.Component {
         </Col>
         <Col md={5} className="host-content" >
           <h2>{this.props.host.username}</h2>
-          <h5>{this.props.host.location}</h5>
-          <p>{this.props.host.description}</p>
+          <h5>{this.props.host.location.city}</h5>
+          <p>{this.props.host.host.description}</p>
           <div>
             <i className="material-icons md-24 ratings">pets</i>
             <i className="material-icons md-24 ratings">pets</i>
