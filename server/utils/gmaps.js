@@ -1,10 +1,10 @@
-const API = process.env.API || require('../../config/googleAPI.config.js');
+const API_KEY = process.env.API_KEY || require('../../config/googleAPI.config.js').KEY;
 const axios = require('axios');
 
 function getGeoLocation(body) {
   const { address, city, state } = body.location;
   const street = address.split(' ').join('+');
-  const googleApiAddress = `https://maps.google.com/maps/api/geocode/json?address=${street},+${city},+${state}&key=${API.KEY}`;
+  const googleApiAddress = `https://maps.google.com/maps/api/geocode/json?address=${street},+${city},+${state}&key=${API_KEY}`;
   return new Promise(resolve => {
     axios.get(googleApiAddress)
     .then(response => {
