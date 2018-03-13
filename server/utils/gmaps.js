@@ -17,7 +17,7 @@ function getGeoLocation(body) {
 
 function getDogParks(location) {
   const { lat, lng } = location;
-  const googleDogsAddress = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${lat},${lng}&radius=7500&keyword=dog+park&key=${API.KEY}`
+  const googleDogsAddress = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${lat},${lng}&radius=7500&keyword=dog+park&key=${API_KEY}`
   return new Promise (resolve => {
     axios.get(googleDogsAddress)
     .then(response => {
